@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,13 +69,12 @@
         }
 
         .clock-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #aaa;
             text-align: center;
-            max-width: 80px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            max-width: 90px;
+            white-space: normal;
+            line-height: 1.3;
         }
 
         .clock-time {
@@ -449,16 +448,19 @@
             { id: 5, title: 'Wrap Up', presenter: 'All', initials: 'ALL', photo: null, duration: 300, color: '#eab308' }
         ];
 
-        // CITIES DATA
+        // CITIES DATA — includes Moscow, Frankfurt, Buenos Aires
         const cities = [
             { name: 'Seoul', tz: 'Asia/Seoul' },
             { name: 'Singapore', tz: 'Asia/Singapore' },
             { name: 'Paris', tz: 'Europe/Paris' },
             { name: 'Warsaw', tz: 'Europe/Warsaw' },
+            { name: 'Frankfurt', tz: 'Europe/Berlin' },
             { name: 'Istanbul', tz: 'Europe/Istanbul' },
+            { name: 'Moscow', tz: 'Europe/Moscow' },
             { name: 'Cairo', tz: 'Africa/Cairo' },
             { name: 'Mexico City', tz: 'America/Mexico_City' },
-            { name: 'São Paulo', tz: 'America/Sao_Paulo' }
+            { name: 'São Paulo', tz: 'America/Sao_Paulo' },
+            { name: 'Buenos Aires', tz: 'America/Argentina/Buenos_Aires' }
         ];
 
         // TIMER VARIABLES
@@ -501,7 +503,7 @@
             setInterval(updateClocks, 1000);
         }
 
-        // RENDER CLOCKS
+        // RENDER CLOCKS — group cities by same UTC offset
         function renderClocks() {
             function getOffset(tz) {
                 const now = new Date();
@@ -866,3 +868,4 @@
     </script>
 </body>
 </html>
+```
