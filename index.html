@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,9 +71,14 @@
             font-size: 10px;
             color: #aaa;
             text-align: center;
-            max-width: 90px;
-            white-space: normal;
+            width: 90px;
+            height: 28px; /* 항상 2줄의 높이를 확보하여 하단 정렬 유지 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             line-height: 1.3;
+            overflow: hidden;
+            word-break: keep-all;
         }
 
         .clock-time {
@@ -273,9 +277,26 @@
             color: #bbb;
         }
 
+        /* TIMING STATS ROW */
+        .card-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
         .card-mins {
             font-size: 15px;
             color: #666;
+        }
+
+        .card-time {
+            font-size: 13px;
+            font-weight: 700;
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
         }
 
         .bar-wrap {
@@ -383,18 +404,15 @@
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <div class="header-title">
                 <div class="title-sub">AGENDA</div>
                 <div class="title-main">Monthly International Geo Call</div>
             </div>
             <div class="clocks-row" id="clocksContainer">
-                <!-- Clocks will be generated here -->
-            </div>
+                </div>
         </div>
 
-        <!-- TIMELINE -->
         <div class="timeline">
             <div class="timeline-line"></div>
             <div class="timeline-step step" data-step="0">
@@ -423,12 +441,9 @@
             </div>
         </div>
 
-        <!-- CARD GRID -->
         <div class="card-grid" id="cardGrid">
-            <!-- Cards will be generated here -->
-        </div>
+            </div>
 
-        <!-- CONTROLS -->
         <div class="controls">
             <button id="startBtn">▶ Start Session</button>
             <button id="pauseBtn" disabled>⏸ Pause</button>
@@ -438,17 +453,17 @@
     </div>
 
     <script>
-        // AGENDA DATA
+        // AGENDA DATA - Added startTime property
         const agendas = [
-            { id: 0, title: 'Top of Mind', presenter: 'Bhawna', initials: 'BH', photo: 'bhawna.png', duration: 900, color: '#00d4ff' },
-            { id: 1, title: 'International P&C Engagement Roadmap', presenter: 'Walaa & Aleksandra', initials: 'WA', photo: 'Walaa photo.jpg', photo2: 'aleksandra.jpg', duration: 1800, color: '#a855f7' },
-            { id: 2, title: 'New Your Voice 2026', presenter: 'Lucas', initials: 'LU', photo: 'Lucas Profile Pic.jpeg', duration: 1800, color: '#f97316' },
-            { id: 3, title: 'Talent Acquisition Tech Roadmap', presenter: 'Elisa', initials: 'EL', photo: 'elisa.jpg', duration: 1800, color: '#22c55e' },
-            { id: 4, title: 'International Geo Meeting Paris', presenter: 'Pedro', initials: 'PE', photo: 'Pedro Pittella-3284.jpg', duration: 600, color: '#ec4899' },
-            { id: 5, title: 'Wrap Up', presenter: 'All', initials: 'ALL', photo: null, duration: 300, color: '#eab308' }
+            { id: 0, title: 'Top of Mind', presenter: 'Bhawna', initials: 'BH', photo: 'bhawna.png', duration: 900, color: '#00d4ff', startTime: '13:00' },
+            { id: 1, title: 'International P&C Engagement Roadmap', presenter: 'Walaa & Aleksandra', initials: 'WA', photo: 'Walaa photo.jpg', photo2: 'aleksandra.jpg', duration: 1800, color: '#a855f7', startTime: '13:15' },
+            { id: 2, title: 'New Your Voice 2026', presenter: 'Lucas', initials: 'LU', photo: 'Lucas Profile Pic.jpeg', duration: 1800, color: '#f97316', startTime: '13:45' },
+            { id: 3, title: 'Talent Acquisition Tech Roadmap', presenter: 'Elisa', initials: 'EL', photo: 'elisa.jpg', duration: 1800, color: '#22c55e', startTime: '14:15' },
+            { id: 4, title: 'International Geo Meeting Paris', presenter: 'Pedro', initials: 'PE', photo: 'Pedro Pittella-3284.jpg', duration: 600, color: '#ec4899', startTime: '14:45' },
+            { id: 5, title: 'Wrap Up', presenter: 'All', initials: 'ALL', photo: null, duration: 300, color: '#eab308', startTime: '14:55' }
         ];
 
-        // CITIES DATA — includes Moscow, Frankfurt, Buenos Aires
+        // CITIES DATA
         const cities = [
             { name: 'Seoul', tz: 'Asia/Seoul' },
             { name: 'Singapore', tz: 'Asia/Singapore' },
@@ -503,7 +518,7 @@
             setInterval(updateClocks, 1000);
         }
 
-        // RENDER CLOCKS — group cities by same UTC offset
+        // RENDER CLOCKS
         function renderClocks() {
             function getOffset(tz) {
                 const now = new Date();
@@ -598,7 +613,10 @@
                         ${getAvatarHTML(a)}
                         <span>${a.presenter}</span>
                     </div>
-                    <div class="card-mins">${minutes} min</div>
+                    <div class="card-stats">
+                        <span class="card-mins">${minutes} min</span>
+                        <span class="card-time">${a.startTime} CET</span>
+                    </div>
                     <div class="bar-wrap">
                         <div class="bar-bg">
                             <div class="bar-fill" id="fill-${a.id}" style="width:100%; background:${a.color}"></div>
@@ -673,7 +691,6 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
 
-                    // Mark current agenda as done
                     setBadge(activeId, 'DONE ✓', '#22c55e');
                     document.getElementById('card-' + activeId).classList.remove('active');
                     document.getElementById('card-' + activeId).classList.add('done');
@@ -708,7 +725,6 @@
             const nextCard = document.getElementById('card-' + nextId);
             if (!nextCard) return;
 
-            // Remove any existing overlay
             const existing = nextCard.querySelector('.auto-progress-overlay');
             if (existing) existing.parentNode.removeChild(existing);
 
@@ -828,7 +844,6 @@
                 card.className = 'card';
                 card.style.borderColor = '';
                 card.style.boxShadow = '';
-                // Remove any auto-progress overlays
                 const overlay = card.querySelector('.auto-progress-overlay');
                 if (overlay) overlay.parentNode.removeChild(overlay);
                 setBadge(a.id, 'PENDING', '#888');
@@ -868,4 +883,3 @@
     </script>
 </body>
 </html>
-```
